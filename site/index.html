@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>宝宝相册导出：海马爸比时光相册批量保存到手机和电脑</title>
+<meta name="description" content="非官方开源工具。自动在海马爸比 App 里按日期勾选、批量下载时光相册的照片，存到手机相册或电脑，逐张校验。提供安卓 App 和桌面版。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0e0e">
+<link rel="canonical" href="https://hanqing.github.io/babyalbum-export/">
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="宝宝相册导出">
+<meta property="og:title" content="宝宝相册导出：几千张宝宝照片，不用再一张张点">
+<meta property="og:description" content="海马爸比时光相册批量导出工具。自动勾选、自动下载，存到手机或电脑。安卓 App + 桌面版，免费开源。">
+<meta property="og:url" content="https://hanqing.github.io/babyalbum-export/">
+<meta property="og:image" content="https://hanqing.github.io/babyalbum-export/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="assets/main.js" defer></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/><path d="M10.8 18.6h2.4"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.6"/><path d="M2.5 19.2h19"/></symbol>
+  <symbol id="i-select" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M8.5 12.2l2.4 2.4 4.8-4.9"/></symbol>
+  <symbol id="i-verify" viewBox="0 0 24 24"><path d="M12 3.2l6.8 2.9v5.4c0 4.2-2.8 7.7-6.8 9.3-4-1.6-6.8-5.1-6.8-9.3V6.1z"/><path d="M9 12.2l2.1 2.1 4-4.1"/></symbol>
+  <symbol id="i-resume" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4.3h-4.3"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.4c0-1.1.9-1.9 1.9-1.9h4.1l2 2.4h7.1c1.1 0 1.9.9 1.9 1.9v7.8c0 1.1-.9 1.9-1.9 1.9H5.4c-1.1 0-1.9-.9-1.9-1.9z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3.2H7.2c-1.1 0-1.9.9-1.9 1.9v13.8c0 1.1.9 1.9 1.9 1.9h9.6c1.1 0 1.9-.9 1.9-1.9V7.9z"/><path d="M14 3.2v4.7h4.7M9 13h6M9 16.6h4"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M10 6.5h10M10 12h10M10 17.5h10M4 6.5l1.2 1.2L7.4 5.5M4 12l1.2 1.2L7.4 11M4 17.5l1.2 1.2 2.2-2.2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M10 9.2v5.6M14 9.2v5.6"/></symbol>
+  <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M8.2 7.6A5.5 5.5 0 0 1 17.9 10a3.6 3.6 0 0 1 2.3 5.7M15.5 18.5H7.1a4.2 4.2 0 0 1-1.6-8.1"/><path d="M3.5 3.5l17 17"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2.4"/><path d="M4 10h16M8.5 3v4M15.5 3v4"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.6"/><circle cx="9" cy="10" r="1.6"/><path d="M4.2 17.4l4.6-4.6 3.4 3.4 2.6-2.6 5 5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l.9 12h8.2L17 7"/></symbol>
+  <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol>
+</svg>
+
+<nav class="nav" id="nav" aria-label="主导航">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><img src="assets/icon.svg" alt="" width="28" height="28">宝宝相册导出</a>
+    <div class="nav-actions">
+      <div class="nav-links">
+        <a href="#versions">两个版本</a>
+        <a href="#how">工作方式</a>
+        <a href="#safety">安全</a>
+        <a href="#bench">实测</a>
+        <a href="#faq">常见问题</a>
+      </div>
+      <a class="nav-gh" href="https://github.com/Hanqing/babyalbum-export" aria-label="GitHub 源码"><svg class="icon"><use href="#i-github"/></svg><span>GitHub</span></a>
+      <div class="nav-dl" id="navDl"><a class="btn-nav" href="https://github.com/Hanqing/babyalbum-export/releases/latest/download/babyalbum-export.apk">下载</a></div>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="hero-icon"><img src="assets/icon.svg" alt="" width="76" height="76"></div>
+        <h1>几千张宝宝照片，<br>不用再一张张点</h1>
+        <p class="tagline">海马爸比「时光相册」的批量导出工具。<br>自动勾选、自动下载，存到手机或电脑。</p>
+        <div class="hero-cta" id="heroCta">
+          <a class="dl-btn" href="https://github.com/Hanqing/babyalbum-export/releases/latest/download/babyalbum-export.apk">
+            <svg class="icon"><use href="#i-download"/></svg>
+            <span><small>免费下载</small><b>安卓 App</b></span>
+          </a>
+          <a class="more-link" href="#versions">也可以存到电脑</a>
+        </div>
+        <p class="hero-req">安卓 8.0 及以上 · 已在海马爸比 3.4.2 实测 · 非官方开源工具</p>
+      </div>
+
+      <div class="stage-wrap">
+        <div class="stage" id="demo" role="tabpanel" aria-label="导出过程演示">
+          <div class="phone-slot" data-phone="hero"></div>
+        </div>
+        <div class="chapters" role="tablist" aria-label="演示步骤">
+          <button class="chapter" role="tab" aria-controls="demo" aria-selected="true" data-scene="0"><span class="chapter-bar"><i></i></span><b>自动勾选</b><span class="chapter-body">按日期整组勾选“未下载”的照片</span></button>
+          <button class="chapter" role="tab" aria-controls="demo" aria-selected="false" data-scene="1"><span class="chapter-bar"><i></i></span><b>批量下载</b><span class="chapter-body">交给官方 App 存进手机相册</span></button>
+          <button class="chapter" role="tab" aria-controls="demo" aria-selected="false" data-scene="2"><span class="chapter-bar"><i></i></span><b>全部完成</b><span class="chapter-body">列表清空即结束，中断了可续传</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sec" id="why">
+    <div class="wrap">
+      <div class="sec-head center" data-reveal>
+        <p class="kicker">为什么做这个</p>
+        <h2>照片都在云端，<br>存下来却要一组组点</h2>
+        <p class="lead">官方 App 能批量下载，但要在「精彩瞬间」里按日期一组组勾选，再点“下载”。照片一多，就是成百上千次点击；小红书上也有家长吐槽要一张张点。这个工具替你把这些点完。</p>
+      </div>
+      <div class="stats" data-reveal>
+        <div class="stat"><p class="stat-v">2,515</p><p class="stat-l">张照片，来自我们实测的账号</p></div>
+        <div class="stat"><p class="stat-v">448</p><p class="stat-l">个日期，手动导出要逐个勾选</p></div>
+        <div class="stat accent"><p class="stat-v">1<small>个按钮</small></p><p class="stat-l">点“开始导出”，其余交给工具</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="versions">
+    <div class="wrap">
+      <div class="sec-head center" data-reveal>
+        <p class="kicker">两个版本</p>
+        <h2>存到手机，或者存到电脑</h2>
+        <p class="lead">两个版本做同一件事：在官方 App 里替你勾选“未下载”的照片，再点“下载”。区别只在照片最后存到哪里。</p>
+      </div>
+      <div class="plans" data-reveal>
+        <article class="plan pro">
+          <p class="plan-head"><svg class="icon"><use href="#i-phone"/></svg>安卓 App<span>宝宝相册导出</span></p>
+          <h3 class="plan-title">手机上直接存</h3>
+          <p class="plan-sub">不需要电脑。装好、开启无障碍服务，点一下“开始导出”。</p>
+          <dl class="plan-rows">
+            <div><dt>照片存到</dt><dd>手机相册「海马爸比」文件夹</dd></div>
+            <div><dt>需要</dt><dd>安卓 8.0+，开启无障碍服务</dd></div>
+            <div><dt>2,515 张实测</dt><dd>约 11 分钟</dd></div>
+            <div><dt>怎么核对</dt><dd>统计相册里新增的照片数</dd></div>
+            <div><dt>安装包</dt><dd>33 KB</dd></div>
+          </dl>
+          <div class="plan-cta">
+            <a class="btn btn-solid" href="https://github.com/Hanqing/babyalbum-export/releases/latest/download/babyalbum-export.apk"><svg class="icon"><use href="#i-download"/></svg>下载 APK</a>
+            <span class="plan-note">v0.1.0 测试版</span>
+          </div>
+        </article>
+        <article class="plan">
+          <p class="plan-head"><svg class="icon"><use href="#i-laptop"/></svg>桌面版<span>相册导出助手</span></p>
+          <h3 class="plan-title">存到电脑，逐张校验</h3>
+          <p class="plan-sub">手机用数据线连电脑，在浏览器打开的界面里点“开始导出”。</p>
+          <dl class="plan-rows">
+            <div><dt>照片存到</dt><dd>电脑上的归档文件夹</dd></div>
+            <div><dt>需要</dt><dd>Mac 或 Windows，Python 3.9+，adb</dd></div>
+            <div><dt>2,515 张实测</dt><dd>20 分 44 秒</dd></div>
+            <div><dt>怎么核对</dt><dd>每张核对 SHA-256、大小和 JPEG 结构</dd></div>
+            <div><dt>另外还有</dt><dd>按月份整理、写入拍摄时间、导出报告</dd></div>
+          </dl>
+          <div class="plan-cta">
+            <a class="btn btn-ghost" href="https://github.com/Hanqing/babyalbum-export/releases/latest/download/album-export-desktop.zip"><svg class="icon"><use href="#i-download"/></svg>下载桌面版</a>
+            <a class="more-link small" href="https://github.com/Hanqing/babyalbum-export/tree/main/desktop#readme">使用说明</a>
+          </div>
+        </article>
+      </div>
+      <div class="both" data-reveal>
+        <p class="both-title">两个版本都</p>
+        <ul class="chips">
+          <li><svg class="icon"><use href="#i-check"/></svg>只下载“未下载”的照片</li>
+          <li><svg class="icon"><use href="#i-check"/></svg>中断后接着下</li>
+          <li><svg class="icon"><use href="#i-check"/></svg>从不点“删除”</li>
+          <li><svg class="icon"><use href="#i-check"/></svg>遇到不认识的页面就暂停</li>
+          <li><svg class="icon"><use href="#i-check"/></svg>照片不上传</li>
+          <li><svg class="icon"><use href="#i-check"/></svg>免费开源</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="sec-head center" data-reveal>
+        <p class="kicker">工作方式</p>
+        <h2>你去陪孩子，<br>点击交给它</h2>
+      </div>
+
+      <div class="feats">
+        <div class="feat" data-reveal>
+          <div class="art art-select" aria-hidden="true">
+            <div class="phone-slot" data-phone="select"></div>
+            <ol class="art-steps">
+              <li><span>1</span>打开“仅显示未下载的文件”</li>
+              <li><span>2</span>回到列表顶部，按日期整组勾选</li>
+              <li><span>3</span>选够约 150 张，点“下载”</li>
+            </ol>
+          </div>
+          <div class="feat-copy">
+            <p class="feature-label"><svg class="icon"><use href="#i-select"/></svg>自动勾选</p>
+            <h3>按日期整组勾选</h3>
+            <p>在「精彩瞬间」打开“仅显示未下载的文件”，从列表顶部开始，一组一组勾日期，每批约 150 张。只点日期旁的勾选框，被底栏挡住的先滑上来再点。</p>
+          </div>
+        </div>
+
+        <div class="feat flip" data-reveal>
+          <div class="art art-download" aria-hidden="true">
+            <div class="phone-slot" data-phone="download"></div>
+            <div class="files">
+              <div class="files-head"><svg class="icon"><use href="#i-folder"/></svg><span>DCIM / Camera / 海马爸比</span><b>+152</b></div>
+              <ul class="files-list">
+                <li><i class="ft"></i><span>1792850412_NGT.jpg</span><em>196 KB</em></li>
+                <li><i class="ft day"></i><span>1792829135.jpg</span><em>231 KB</em></li>
+                <li><i class="ft day"></i><span>1792821134.jpg</span><em>218 KB</em></li>
+                <li><i class="ft"></i><span>1792764023_NGT.jpg</span><em>187 KB</em></li>
+                <li><i class="ft day"></i><span>1792742611.jpg</span><em>244 KB</em></li>
+                <li><i class="ft day"></i><span>1792735409.jpg</span><em>209 KB</em></li>
+              </ul>
+            </div>
+          </div>
+          <div class="feat-copy">
+            <p class="feature-label"><svg class="icon"><use href="#i-download"/></svg>批量下载</p>
+            <h3>官方 App 下载，文件原样保存</h3>
+            <p>下载由海马爸比 App 自己完成，照片存进手机相册的「海马爸比」文件夹。实测同一张照片重复下载，得到的文件逐字节相同。下载本身很快，200 张约 10 秒。</p>
+          </div>
+        </div>
+
+        <div class="feat" data-reveal>
+          <div class="art art-desk" aria-hidden="true">
+            <div class="win">
+              <div class="win-bar"><i></i><i></i><i></i><span>127.0.0.1 · 相册导出助手</span></div>
+              <div class="win-body">
+                <p class="g-title">相册导出助手</p>
+                <p class="g-sub">适用于海马爸比 · 自动勾选并下载“未下载”的照片，逐张校验后保存到这台电脑。</p>
+                <div class="g-sec"><b>1 · 连接手机</b><span class="g-ok">已连接 vivo V2133A · 海马 App 3.4.2（已验证）</span></div>
+                <div class="g-sec"><b>2 · 保存位置</b><span class="g-input">~/Pictures/海马爸比相册归档</span></div>
+                <div class="g-sec g-run">
+                  <b>3 · 导出</b>
+                  <div class="g-btns"><span class="g-btn primary">开始导出</span><span class="g-btn">停止</span><span class="g-btn">生成按月份副本</span><span class="g-btn">查看报告</span></div>
+                  <div class="g-bar"><i></i></div>
+                  <p class="g-prog">进行中 · 第 9 批 · 已下载 1,742 张 · 已保存到电脑 1,742 张</p>
+                  <pre class="g-log">第 8 批：下载 188/188 张，用时 10 秒
+已保存 188 张，跳过重复 0 张，失败 0 张
+第 9 批：选中 196 张（2025-12-02 至 2025-11-03，18 组）
+第 9 批：下载 196/196 张，用时 11 秒
+已保存 196 张，跳过重复 0 张，失败 0 张</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feat-copy">
+            <p class="feature-label"><svg class="icon"><use href="#i-verify"/></svg>逐张校验 · 桌面版</p>
+            <h3>每一张都核对过，才算存好</h3>
+            <p>桌面版把照片拉到电脑后，逐张核对手机端的 SHA-256、大小和 JPEG 结构，全部通过才放进「原始文件」；同一内容只存一份。手机上的照片保持原样。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="more">
+        <article class="card" data-reveal>
+          <div class="art art-resume" aria-hidden="true">
+            <div class="mini">
+              <p class="mini-head"><svg class="icon"><use href="#i-pause"/></svg>已暂停 · 第 5 批</p>
+              <p class="mini-text">屏幕已关闭，导出已暂停。重新开始会从断点继续。</p>
+              <div class="track"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="half"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <span class="mini-btn">开始导出</span>
+            </div>
+          </div>
+          <p class="feature-label"><svg class="icon"><use href="#i-resume"/></svg>断点续传</p>
+          <h4>中断了，接着下</h4>
+          <p>断线、锁屏、关掉 App 都没关系。再点一次开始，从还没下载的照片接着来，已下载的不会重复。</p>
+        </article>
+        <article class="card" data-reveal>
+          <div class="art art-month" aria-hidden="true">
+            <div class="finder">
+              <p class="crumbs">按月份 <i>›</i> 2025 <i>›</i> <b>2025-04</b></p>
+              <ul>
+                <li><i class="ft day"></i>2025-04-12_091530.jpg</li>
+                <li class="sel"><i class="ft day"></i>2025-04-12_133012.jpg</li>
+                <li><i class="ft"></i>2025-04-12_214455_夜间.jpg</li>
+                <li><i class="ft day"></i>2025-04-13_071206.jpg</li>
+              </ul>
+              <span class="exif"><svg class="icon"><use href="#i-calendar"/></svg>拍摄时间 2025-04-12 13:30:12 +08:00</span>
+            </div>
+          </div>
+          <p class="feature-label"><svg class="icon"><use href="#i-calendar"/></svg>按月归档 · 桌面版</p>
+          <h4>按真实拍摄时间整理</h4>
+          <p>原图里没有拍摄时间，文件名就是拍摄时刻。桌面版按东八区换算，生成按月份分好、写入拍摄时间的副本；原文件不动。</p>
+        </article>
+        <article class="card" data-reveal>
+          <div class="art art-report" aria-hidden="true">
+            <div class="doc">
+              <p class="doc-h1">照片导出报告</p>
+              <p class="doc-line">状态：<b>完成</b> · 失败 0 张</p>
+              <p class="doc-h2"><svg class="icon"><use href="#i-check"/></svg>搬运完整性</p>
+              <p class="doc-line">新保存 2,515 张（535.2 MB），每张核对大小和 SHA-256</p>
+              <p class="doc-h2"><svg class="icon"><use href="#i-check"/></svg>来源覆盖</p>
+              <p class="doc-line">按月份统计，“未下载”列表已清空</p>
+              <p class="doc-h2"><svg class="icon"><use href="#i-check"/></svg>质量与限制</p>
+              <p class="doc-line">2560×1440 · 夜间红外照另行统计</p>
+            </div>
+          </div>
+          <p class="feature-label"><svg class="icon"><use href="#i-file"/></svg>导出报告 · 桌面版</p>
+          <h4>存了多少、缺了什么，一目了然</h4>
+          <p>报告分三部分：搬运是否完整、来源覆盖到哪一天、还有哪些限制，方便日后核对。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="safety">
+    <div class="wrap safety">
+      <div class="art art-safety" aria-hidden="true" data-reveal>
+        <div class="zoom">
+          <div class="zoom-group"><span class="zcb"></span><b>2026-10-21</b><em>6 张</em><span class="ring ok">日期勾选框</span></div>
+          <div class="zoom-tiles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="zoom-group under"><span class="zcb off"></span><b>2026-10-20</b><em>4 张</em><span class="ring warn">被挡住一半，先滑上来</span></div>
+          <div class="zoom-bar">
+            <span class="zb-del"><svg class="icon"><use href="#i-trash"/></svg>删除</span>
+            <span class="zb-dl"><svg class="icon"><use href="#i-download"/></svg>下载</span>
+          </div>
+        </div>
+        <span class="zoom-tag no">一律不点</span>
+        <span class="zoom-tag yes">只点这一侧</span>
+      </div>
+      <div class="safety-copy" data-reveal>
+        <p class="kicker">安全规则</p>
+        <h2>只点该点的，<br>“删除”碰都不碰</h2>
+        <ul class="rules">
+          <li><span class="dot"><svg class="icon"><use href="#i-list"/></svg></span><div><h3>只点白名单</h3><p>只点导航白名单里的控件和日期勾选框；文字含“删除”的控件一律不点。</p></div></li>
+          <li><span class="dot"><svg class="icon"><use href="#i-target"/></svg></span><div><h3>离“删除”远远的</h3><p>“删除”和“下载”紧挨着。桌面版只点“下载”远离“删除”的一侧，点之前先核对两个按钮的文字和 ID；App 直接调用“下载”按钮自己的点击动作。</p></div></li>
+          <li><span class="dot"><svg class="icon"><use href="#i-pause"/></svg></span><div><h3>看不懂就停</h3><p>不认识的页面、锁屏、断线、连续没有进展，都会暂停，等你处理好再接着来。</p></div></li>
+          <li><span class="dot"><svg class="icon"><use href="#i-cloud-off"/></svg></span><div><h3>照片只进不出</h3><p>不删除、不移动手机上的照片；不联网，不上传。</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="bench">
+    <div class="wrap">
+      <div class="sec-head center" data-reveal>
+        <p class="kicker">实测数据</p>
+        <h2>2,515 张照片，一次跑完</h2>
+        <p class="lead">在一台 vivo 手机（Android 14，海马爸比 3.4.2）上，两个版本各完整导出一遍。重新下载的每一张都与原文件逐字节一致，失败 0 张。</p>
+      </div>
+      <figure class="chart" id="chart" data-reveal>
+        <figcaption class="chart-title">全量导出 2,515 张的用时（越短越好）</figcaption>
+        <div class="bars" role="list">
+          <div class="bar-row muted" role="listitem">
+            <span class="bar-name">原型脚本<small>10 月 24 日</small></span>
+            <div class="bar-track" tabindex="0" style="--r:1" data-tip-value="68.5 分钟" data-tip-name="原型脚本" data-tip-detail="2,514 张 · 143 批 · 第一次导出时用的脚本">
+              <span class="bar-fill"></span><span class="bar-val">68.5 分钟</span>
+            </div>
+          </div>
+          <div class="bar-row" role="listitem">
+            <span class="bar-name">桌面版</span>
+            <div class="bar-track" tabindex="0" style="--r:.3026" data-tip-value="20 分 44 秒" data-tip-name="桌面版" data-tip-detail="勾选 961 秒 · 下载 168 秒 · 读界面 228 次，每次约 3 秒 · 13 批">
+              <span class="bar-fill"></span><span class="bar-val">20 分 44 秒</span>
+            </div>
+          </div>
+          <div class="bar-row" role="listitem">
+            <span class="bar-name">安卓 App</span>
+            <div class="bar-track" tabindex="0" style="--r:.1596" data-tip-value="约 11 分钟" data-tip-name="安卓 App" data-tip-detail="勾选 427 秒 · 下载 130 秒 · 13 批 · 中途修复一次后从断点续传">
+              <span class="bar-fill"></span><span class="bar-val">约 11 分钟</span>
+            </div>
+          </div>
+        </div>
+        <p class="chart-note">慢在勾选，不在下载：桌面版每读一次界面约 3 秒，App 读界面几乎不花时间，所以快一倍。测试方法：先把手机上的照片临时挪走（记下 SHA-256），让它们重新变成“未下载”，跑完后逐张核对，再放回原处。</p>
+        <details class="chart-table">
+          <summary>查看数据表</summary>
+          <div class="table-scroll"><table>
+            <thead><tr><th scope="col">版本</th><th scope="col">全量用时</th><th scope="col">勾选</th><th scope="col">下载</th><th scope="col">批次</th><th scope="col">结果</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">原型脚本</th><td>68.5 分钟</td><td>—</td><td>—</td><td>143</td><td>2,514 张</td></tr>
+              <tr><th scope="row">桌面版</th><td>20 分 44 秒</td><td>961 秒</td><td>168 秒</td><td>13</td><td>2,515 张，失败 0</td></tr>
+              <tr><th scope="row">安卓 App</th><td>约 11 分钟</td><td>427 秒</td><td>130 秒</td><td>13</td><td>2,515 张，失败 0</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec" id="start">
+    <div class="wrap">
+      <div class="sec-head center" data-reveal>
+        <p class="kicker">开始使用</p>
+        <h2>三步就能开始</h2>
+      </div>
+      <div class="start" data-reveal>
+        <article class="start-card">
+          <h3><svg class="icon"><use href="#i-phone"/></svg>安卓 App</h3>
+          <ol>
+            <li><span class="num">1</span><div><h4>下载安装</h4><p>下载 APK 并安装。手机提示“来源不明”或“有风险”时，确认继续安装。</p></div></li>
+            <li><span class="num">2</span><div><h4>开启无障碍服务</h4><p>打开「宝宝相册导出」，点“去开启”，在无障碍设置里打开它。开关是灰色的话，先在应用详情右上角菜单里点“允许受限设置”。</p></div></li>
+            <li><span class="num">3</span><div><h4>开始导出</h4><p>点“开始导出”，保持亮屏、不要操作手机。顶部黑条显示进度，可以随时停止。</p></div></li>
+          </ol>
+        </article>
+        <article class="start-card">
+          <h3><svg class="icon"><use href="#i-laptop"/></svg>桌面版</h3>
+          <ol>
+            <li><span class="num">1</span><div><h4>打开 USB 调试</h4><p>设置 → 关于手机 → 连续点“版本号”7 次；在开发者选项里打开“USB 调试”，连上电脑后在手机上点“允许”。</p></div></li>
+            <li><span class="num">2</span><div><h4>准备电脑</h4><p>需要 Python 3.9+ 和 adb。Mac 可以用 <code>brew install android-platform-tools</code>，也可以把 Google 的 platform-tools 解压到程序目录里。</p></div></li>
+            <li><span class="num">3</span><div><h4>双击启动</h4><p>Mac 双击「相册导出助手.command」，Windows 双击「相册导出助手.bat」，在打开的网页里点“开始导出”。</p></div></li>
+          </ol>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq">
+    <div class="wrap faq-grid">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">你可能想知道</p>
+        <h2>开始前，<br>了解这些</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details>
+          <summary>这是海马爸比官方的工具吗？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>不是。这是一个独立的开源项目，和海马爸比及其开发商没有关系。它只是替你在官方 App 里点“勾选”和“下载”；登录和下载都在官方 App 里完成。</p></div>
+        </details>
+        <details>
+          <summary>会不会删掉我的照片？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>不会。两个版本都只点导航白名单里的控件和日期勾选框，文字含“删除”的控件一律不点，遇到不认识的页面就暂停。工具也不会删除或移动手机上的任何照片。</p></div>
+        </details>
+        <details>
+          <summary>下载到的是原图吗？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>拿到的是官方 App 提供的照片文件（实测为 2560×1440 的 JPG）。同一张照片重复下载，文件逐字节相同；但还没有和摄像头里的源文件比对过，所以不敢说一定等同于摄像头原图。</p></div>
+        </details>
+        <details>
+          <summary>为什么要开无障碍服务？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>安卓 App 要靠它读取海马爸比的界面并点击。服务只接收海马爸比 App 的事件，只在你点“开始导出”后操作；不读取照片内容，不联网。导出结束后可以随时关掉。</p></div>
+        </details>
+        <details>
+          <summary>为什么不直接在电脑上装海马爸比？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>海马爸比在电脑和手机上同时登录会互相踢下线。桌面版通过数据线操作手机上已经登录的 App，不需要重新登录。</p></div>
+        </details>
+        <details>
+          <summary>支持哪些手机？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>已实测：vivo V2133A，Android 14，海马爸比 3.4.2。其他安卓手机和版本大概率能用，遇到不认识的页面会暂停，不会乱点。纯血鸿蒙不能运行安卓 App，也没有 adb，暂不支持；iPhone 也不支持。</p></div>
+        </details>
+        <details>
+          <summary>中途断了怎么办？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>再点一次“开始导出”就行。进度以手机上已经下载的照片为准，下过的不会重复下载。</p></div>
+        </details>
+        <details>
+          <summary>照片的拍摄时间对吗？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>原图里没有拍摄时间信息，文件名就是拍摄时刻（Unix 时间戳，带 _NGT 的是夜间红外照）。桌面版的“按月份”副本按东八区写入了拍摄时间，导入相册后会按真实时间排序；原始文件保持不变。</p></div>
+        </details>
+        <details>
+          <summary>安装时提示有风险，或者无障碍开不了？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>从网页下载的 APK 不来自应用商店，手机会提示风险，确认安装即可。Android 13 及以上如果无障碍开关是灰的，到「应用详情 → 右上角菜单 → 允许受限设置」后再开。vivo 第一次会问是否允许打开海马爸比，请选“始终打开”。</p></div>
+        </details>
+        <details>
+          <summary>Mac 双击启动时提示无法验证开发者？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>右键点「相册导出助手.command」，选“打开”，再确认一次即可。也可以在终端里进入程序目录，运行 <code>python3 -m album_export gui</code>。</p></div>
+        </details>
+        <details>
+          <summary>Windows 能用吗？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>桌面版是跨平台的 Python 程序，Windows 上会自动查找 adb；部分手机需要先装厂商的 USB 驱动。目前还没有在 Windows 实机验证过，欢迎反馈。</p></div>
+        </details>
+        <details>
+          <summary>收费吗？<svg class="icon"><use href="#i-plus"/></svg></summary>
+          <div class="a"><p>免费，源码以 MIT 许可公开在 <a href="https://github.com/Hanqing/babyalbum-export">GitHub</a>。遇到问题可以<a href="https://github.com/Hanqing/babyalbum-export/issues">提交反馈</a>。</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap" data-reveal>
+      <img class="cta-icon" src="assets/icon.svg" alt="" width="96" height="96">
+      <h2>把时光相册，<br>完整地留在自己手里</h2>
+      <div class="hero-cta">
+        <a class="dl-btn" href="https://github.com/Hanqing/babyalbum-export/releases/latest/download/babyalbum-export.apk">
+          <svg class="icon"><use href="#i-download"/></svg>
+          <span><small>免费下载</small><b>安卓 App</b></span>
+        </a>
+        <a class="more-link" href="https://github.com/Hanqing/babyalbum-export">在 GitHub 查看源码</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <p>© 2026 Hanqing · MIT 许可</p>
+      <p class="foot-links">
+        <a href="https://github.com/Hanqing/babyalbum-export">GitHub</a>
+        <a href="https://github.com/Hanqing/babyalbum-export/blob/main/docs/实施记录.md">实施记录</a>
+        <a href="https://github.com/Hanqing/babyalbum-export/issues">问题反馈</a>
+      </p>
+    </div>
+    <p class="disclaimer">本项目是独立的开源工具，与海马爸比及其开发商没有关联。“海马爸比”是其权利人的商标，这里只用来说明适用的 App。</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
+</body>
+</html>

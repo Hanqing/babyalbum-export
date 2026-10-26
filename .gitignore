@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# APK build output (android-app/build.sh)
+android-app/build/
+
+# Optional adb copy placed next to the desktop tool
+desktop/platform-tools/
+
+# Ledger and temp files if an archive is created inside the repo by mistake
+.album-export/

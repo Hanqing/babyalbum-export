@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">宝宝相册导出</string>
+    <string name="service_name">宝宝相册导出（自动下载照片）</string>
+    <string name="a11y_description">用于在海马爸比 App 的「精彩瞬间」页面，按日期自动勾选照片并点击“下载”，把时光相册批量保存到手机相册。\n\n只在你点击“开始导出”后运行；只操作海马爸比 App；从不点击“删除”；不读取、不上传任何照片内容。导出完成或你点击“停止”后即停止操作。</string>
+</resources>
